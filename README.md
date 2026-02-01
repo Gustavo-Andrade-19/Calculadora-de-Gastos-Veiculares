@@ -133,27 +133,6 @@ custoTotal (REAL)
 dataCriacao (DATETIME)
 ```
 
-##  Deploy no Render.com
-
-### Configurar para Produção
-
-1. **Atualize package.json com start script**
-```json
-"scripts": {
-  "start": "node server.js",
-  "dev": "node server.js"
-}
-```
-
-2. **Deploy no Render**
-   - Conecte seu repositório GitHub
-   - Type: Node
-   - Build Command: `npm install`
-   - Start Command: `npm start`
-   - Environment Variables:
-     - `NODE_ENV`: production
-     - `JWT_SECRET`: [gere uma chave segura]
-     - `PORT`: 3000
 
 3. **Configurar CORS**
    - Frontend URL do Render: `https://seu-app.onrender.com`
@@ -197,9 +176,6 @@ JWT_SECRET=sua-chave-secreta-segura-aqui
 CORS_ORIGIN=http://localhost:8000
 ```
 
-**Em produção (Render.com):**
-- Gere um `JWT_SECRET` forte com: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
-- Configure `CORS_ORIGIN` para seu domínio final
 
 ##  Segurança
 
@@ -216,15 +192,6 @@ Testado em:
 - Desktop (1920x1080)
 - Tablet (768px)
 - Mobile (480px, 375px)
-
-##  Próximas Implementações
-
-- [ ] Filtros no histórico
-- [ ] Exportar CSV
-- [ ] Múltiplos perfis de veículo
-- [ ] Gráficos de gastos
-- [ ] Editar/Deletar cálculos
-- [ ] Integração com Google Maps
 
 ##  Reportar Problemas
 
