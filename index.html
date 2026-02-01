@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Gasto com Combustível</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div>
+                    <h1> Calculadora de Gastos Veiculares</h1>
+                    <p class="subtitle">Planeje suas viagens com precisão</p>
+                </div>
+                <button class="theme-toggle" id="themeToggle" title="Alternar tema">
+                    <span class="sun-icon">☀️</span>
+                    <span class="moon-icon">🌙</span>
+                </button>
+            </div>
+        </header>
+    
+        <div class="tabs">
+            <button class="tab-btn active" onclick="abrirAba(0)"> Cálculo de Gastos</button>
+            <button class="tab-btn" onclick="abrirAba(1)"> Orçamento de Viagem</button>
+            <button class="tab-btn" onclick="abrirAba(2)"> Histórico</button>
+            <div class="tab-indicator"></div>
+        </div>
+
+        <div class="tab-content active" id="aba0">
+            <div class="section">
+                <h2>Dados do Veículo</h2>
+                <div class="form-group">
+                    <label for="kmLitro">Consumo do Veículo (km/l):</label>
+                    <input type="number" id="kmLitro" placeholder="Ex: 10" step="0.01">
+                </div> 
+            
+            <div class="form-group">
+                <label for="precoCombustivel">Preço do Combustível (R$/litro):</label>
+                <input type="number" id="precoCombustivel" placeholder="Ex: 5.49" step="0.01">
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Rota da Viagem</h2>
+            <div class="form-group">
+                <label for="origem">Origem:</label>
+                <input type="text" id="origem" placeholder="Digite a cidade de origem">
+            </div>
+
+        <div class="form-group">
+                <label for="destino">Destino:</label>
+                <input type="text" id="destino" placeholder="Digite a cidade de destino">
+            </div>
+        
+            <button class="btn-primary" onclick="mostrarMapa()"> Mostrar Rota no Mapa</button>
+
+            <div id="mapa" class="mapa"></div>
+
+            <div class="form-group">
+                <label for="distancia">Distância a percorrer (km):</label>
+                <input type="number" id="distancia" placeholder="Ex: 100" step="0.1">
+            </div>
+
+            <div class="form-group checkbox">
+                <label for="idaVolta">
+                    <input type="checkbox" id="idaVolta">
+                    Considerar ida e volta (duplicar distância)
+                </label>
+            </div>
+        </div>
+
+        <button class="btn-primary btn-large" onclick="calcularGasto()"> Calcular Gasto</button>
+        <div id="resultado" class="resultado"></div>
+    </div>
+
+    
+    <div class="tab-content" id="aba1">
+        <div class="section">
+            <h2>Cálculo de Orçamento</h2>
+            <div class="form-group">
+                <label for="dias">Número de dias:</label>
+                <input type="number" id="dias" placeholder="Ex: 22" step="1">
+            </div>
+
+            <div class="form-group">
+                <label for="kmDia">Km por dia:</label>
+                <input type="number" id="kmDia" placeholder="Ex: 12.76" step="0.01">
+            </div>
+
+            <button class="btn-primary btn-large" onclick="calcularOrcamento()"> Calcular Orçamento</button>
+            <div id="resultadoOrcamento" class="resultado"></div>
+        </div>
+    </div>
+
+    
+    <div class="tab-content" id="aba2">
+        <div class="section">
+            <h2>Histórico de Cálculos</h2>
+            
+           
+            <div id="loginSection" class="auth-section">
+                <h3>Faça login ou registre-se para acessar seu histórico</h3>
+                
+                
+                <div class="auth-tabs">
+                    <button class="auth-tab-btn active" onclick="alterarAbaAuth('login')">Login</button>
+                    <button class="auth-tab-btn" onclick="alterarAbaAuth('registro')">Registrar</button>
+                </div>
+                
+               
+                <div id="loginForm" class="auth-form active">
+                    <div class="form-group">
+                        <label for="loginEmail">Email:</label>
+                        <input type="email" id="loginEmail" placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginSenha">Senha:</label>
+                        <input type="password" id="loginSenha" placeholder="Digite sua senha">
+                    </div>
+                    <button class="btn-primary btn-large" onclick="fazerLogin()">Entrar</button>
+                    <div id="loginErro" class="erro-msg"></div>
+                </div>
+                
+              
+                <div id="registroForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="registroEmail">Email:</label>
+                        <input type="email" id="registroEmail" placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="registroSenha">Senha:</label>
+                        <input type="password" id="registroSenha" placeholder="Digite uma senha">
+                    </div>
+                    <div class="form-group">
+                        <label for="registroConfirm">Confirmar Senha:</label>
+                        <input type="password" id="registroConfirm" placeholder="Confirme sua senha">
+                    </div>
+                    <button class="btn-primary btn-large" onclick="fazerRegistro()">Registrar</button>
+                    <div id="registroErro" class="erro-msg"></div>
+                </div>
+            </div>
+            
+            
+            <div id="historicoSection" class="historico-logado" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3>Bem-vindo, <span id="usuarioEmail"></span>!</h3>
+                    <button class="btn-secondary" onclick="fazerLogout()">Sair</button>
+                </div>
+                <div id="historico" class="historico-container">
+                    <p class="loading">Carregando histórico...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+ </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
